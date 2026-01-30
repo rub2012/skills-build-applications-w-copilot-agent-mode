@@ -25,8 +25,22 @@ router.register(r'activities', views.ActivityViewSet, basename='activity')
 router.register(r'workouts', views.WorkoutViewSet, basename='workout')
 router.register(r'leaderboard', views.LeaderboardViewSet, basename='leaderboard')
 
+from django.urls import re_path
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+
+def api_root(request, format=None):
+    base_url = request.build_absolute_uri('/')
+    return Response({
+        'users': base_url + 'api/users/',
+        'teams': base_url + 'api/teams/',
+        'activities': base_url + 'api/activities/',
+        'workouts': base_url + 'api/workouts/',
+        'leaderboard': base_url + 'api/leaderboard/',
+    })
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.api_root, name='api-root'),
-    path('', include(router.urls)),
+    path('api/', include((router.urls, 'api'))),
+    path('', api_root, name='api-root'),
 ]
